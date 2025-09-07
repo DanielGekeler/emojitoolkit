@@ -1,0 +1,65 @@
+package main
+
+import (
+	"emoji-toolkit/internal"
+	"encoding/binary"
+	"encoding/xml"
+	"fmt"
+	"os"
+	"strconv"
+)
+
+func main() {
+	GenerateEmojiRanges()
+}
+
+func GenerateEmojiRanges() {
+	data, _ := os.ReadFile("../ucd.nounihan.flat.xml")
+	var ucd internal.AnyXML
+	err := xml.Unmarshal(data, &ucd)
+	if err != nil {
+		fmt.Println("Error unmarshaling XML:", err)
+		return
+	}
+
+	var repertoire internal.AnyXML
+	for _, v := range ucd.Children {
+		if v.XMLName.Local == "repertoire" {
+			repertoire = v
+		}
+	}
+
+	codepoints := make([]int32, 0, 1024)
+
+	for _, char := range repertoire.Children {
+		if char.GetAttr("ExtPict") == "Y" && char.GetAttr("Emoji") == "Y" &&
+			char.GetAttr("EComp") == "N" {
+			n, _ := strconv.ParseUint(char.GetAttr("cp"), 16, 32)
+			codepoints = append(codepoints, int32(n))
+		}
+	}
+
+	emoji_ranges := make([][]int32, 0)
+	current_range := make([]int32, 0)
+	for _, v := range codepoints {
+		if len(current_range) == 0 {
+			current_range = append(current_range, v)
+			continue
+		}
+
+		if current_range[len(current_range)-1]+1 == v {
+			current_range = append(current_range, v)
+		} else {
+			emoji_ranges = append(emoji_ranges, current_range)
+			current_range = []int32{v}
+		}
+	}
+	emoji_ranges = append(emoji_ranges, current_range)
+
+	range_bytes := make([]byte, len(emoji_ranges)*8)
+	for i, v := range emoji_ranges {
+		binary.LittleEndian.PutUint32(range_bytes[i*8:i*8+4], uint32(v[0]))
+		binary.LittleEndian.PutUint32(range_bytes[i*8+4:i*8+8], uint32(v[len(v)-1]))
+	}
+	os.WriteFile("../emoji_ranges.bin", range_bytes, os.ModePerm)
+}
