@@ -14,7 +14,7 @@ func main() {
 }
 
 func GenerateEmojiRanges() {
-	data, _ := os.ReadFile("../ucd.nounihan.flat.xml")
+	data, _ := os.ReadFile("ucd.nounihan.flat.xml")
 	var ucd internal.AnyXML
 	err := xml.Unmarshal(data, &ucd)
 	if err != nil {
@@ -61,5 +61,5 @@ func GenerateEmojiRanges() {
 		binary.LittleEndian.PutUint32(range_bytes[i*8:i*8+4], uint32(v[0]))
 		binary.LittleEndian.PutUint32(range_bytes[i*8+4:i*8+8], uint32(v[len(v)-1]))
 	}
-	os.WriteFile("../emoji_ranges.bin", range_bytes, os.ModePerm)
+	os.WriteFile("emoji_ranges.bin", range_bytes, os.ModePerm)
 }

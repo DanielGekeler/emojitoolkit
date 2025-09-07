@@ -14,6 +14,8 @@ const Version = "16.0.0"
 	IntroducedIn string
 }*/
 
+//go:generate go run generator/main.go
+
 //go:embed emoji_ranges.bin
 var emoji_ranges []byte
 
