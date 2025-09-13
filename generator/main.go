@@ -4,31 +4,16 @@ import (
 	"emoji-toolkit/internal"
 	"encoding/binary"
 	"encoding/xml"
-	"fmt"
 	"os"
 	"strconv"
 )
 
 func main() {
-	GenerateEmojiRanges()
+	repertoire := loadRepertoire("ucd.nounihan.flat.xml")
+	GenerateEmojiRanges(repertoire)
 }
 
-func GenerateEmojiRanges() {
-	data, _ := os.ReadFile("ucd.nounihan.flat.xml")
-	var ucd internal.AnyXML
-	err := xml.Unmarshal(data, &ucd)
-	if err != nil {
-		fmt.Println("Error unmarshaling XML:", err)
-		return
-	}
-
-	var repertoire internal.AnyXML
-	for _, v := range ucd.Children {
-		if v.XMLName.Local == "repertoire" {
-			repertoire = v
-		}
-	}
-
+func GenerateEmojiRanges(repertoire internal.AnyXML) {
 	codepoints := make([]int32, 0, 1024)
 
 	for _, char := range repertoire.Children {
@@ -39,6 +24,27 @@ func GenerateEmojiRanges() {
 		}
 	}
 
+	writeRanges("emoji_ranges.bin", codepoints)
+}
+
+func loadRepertoire(path string) internal.AnyXML {
+	data, _ := os.ReadFile(path)
+	var ucd internal.AnyXML
+	err := xml.Unmarshal(data, &ucd)
+	if err != nil {
+		panic("Error unmarshaling XML: " + err.Error())
+	}
+
+	var repertoire internal.AnyXML
+	for _, v := range ucd.Children {
+		if v.XMLName.Local == "repertoire" {
+			repertoire = v
+		}
+	}
+	return repertoire
+}
+
+func writeRanges(path string, codepoints []int32) {
 	emoji_ranges := make([][]int32, 0)
 	current_range := make([]int32, 0)
 	for _, v := range codepoints {
@@ -61,5 +67,5 @@ func GenerateEmojiRanges() {
 		binary.LittleEndian.PutUint32(range_bytes[i*8:i*8+4], uint32(v[0]))
 		binary.LittleEndian.PutUint32(range_bytes[i*8+4:i*8+8], uint32(v[len(v)-1]))
 	}
-	os.WriteFile("emoji_ranges.bin", range_bytes, os.ModePerm)
+	os.WriteFile(path, range_bytes, os.ModePerm)
 }
