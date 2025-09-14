@@ -11,8 +11,12 @@ import (
 func main() {
 	repertoire := loadRepertoire("ucd.nounihan.flat.xml")
 	GenerateEmojiRanges(repertoire)
+	GenerateEmojiRanges2(repertoire)
 }
 
+// Singe Codepoint emojis with Emoji_Presentation=Yes
+//
+// ED-6 see https://www.unicode.org/reports/tr51/#def_emoji_presentation
 func GenerateEmojiRanges(repertoire internal.AnyXML) {
 	codepoints := make([]int32, 0, 1024)
 
@@ -25,6 +29,23 @@ func GenerateEmojiRanges(repertoire internal.AnyXML) {
 	}
 
 	writeRanges("emoji_ranges.bin", codepoints)
+}
+
+// Emojis that appear as text by default but can appear with an emoji presentation.
+// These characters will appear as emojis when followed by U+FE0F (Variation Selector-16)
+//
+// ED-7 see https://www.unicode.org/reports/tr51/#def_text_presentation
+func GenerateEmojiRanges2(repertoire internal.AnyXML) {
+	codepoints := make([]int32, 0, 1024)
+
+	for _, char := range repertoire.Children {
+		if char.GetAttr("Emoji") == "Y" && char.GetAttr("EPres") == "N" {
+			n, _ := strconv.ParseUint(char.GetAttr("cp"), 16, 32)
+			codepoints = append(codepoints, int32(n))
+		}
+	}
+
+	writeRanges("emoji_ranges2.bin", codepoints)
 }
 
 func loadRepertoire(path string) internal.AnyXML {
