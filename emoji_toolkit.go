@@ -20,7 +20,7 @@ var emoji_ranges []byte
 // using emoji presentation sequence ([ED-9a]) are not matched because
 // the pressence of U+FE0F VARIATION SELECTOR-16 (VS16) can not be verified from a single rune.
 //
-// See section Basic_Emoji of [emoji-sequences.txt] for a list of matching symbols.
+// See section Basic_Emoji of [emoji-sequences.txt] for a list of matching emojis.
 //
 // # Examples:
 //
@@ -35,6 +35,7 @@ var emoji_ranges []byte
 // [ED-6]: https://www.unicode.org/reports/tr51/#def_emoji_presentation
 // [ED-7]: https://www.unicode.org/reports/tr51/#def_text_presentation
 // [ED-9a]: https://www.unicode.org/reports/tr51/#def_emoji_presentation_sequence
+// [emoji-sequences.txt]: https://www.unicode.org/Public/emoji/latest/emoji-sequences.txt
 func IsSingleCharacterEmoji(r rune) bool {
 	return isInRange(r, emoji_ranges)
 }
@@ -42,9 +43,25 @@ func IsSingleCharacterEmoji(r rune) bool {
 //go:embed emoji_ranges2.bin
 var emoji_ranges2 []byte
 
-// Check if a string contains a basic emoji defined by [ED-20]
+// Matches default emoji presentation character ([ED-6]) as well as
+// emoji presentation sequence ([ED-9a]). This should include all basic emoji defined by [ED-20].
 //
+// See section Basic_Emoji and Emoji_Keycap_Sequence of [emoji-sequences.txt] for a list of matching emojis.
+//
+// # Examples:
+//
+//	"A" -> false // U+0041
+//	"⏳" -> true // U+231B
+//	"🌍" -> true // U+1F30D
+//	"☀" -> false // U+2600
+//	"♻" -> false // U+267B
+//	"☀️":  true // U+2600 U+FE0F
+//	"♻️":  true // U+267B U+FE0F
+//
+// [ED-6]: https://www.unicode.org/reports/tr51/#def_emoji_presentation
+// [ED-9a]: https://www.unicode.org/reports/tr51/#def_emoji_presentation_sequence
 // [ED-20]: https://www.unicode.org/reports/tr51/#def_basic_emoji_set
+// [emoji-sequences.txt]: https://www.unicode.org/Public/emoji/latest/emoji-sequences.txt
 func ContainsEmoji(s string) bool {
 	runes := []rune(s)
 	l := len(runes)

@@ -1,8 +1,11 @@
 package main
 
 import (
-	emojitoolkit "emoji-toolkit"
+	"emoji-toolkit/internal"
+	"encoding/xml"
 	"fmt"
+	"os"
+	"strconv"
 )
 
 // https://www.unicode.org/reports/tr42/
@@ -12,14 +15,7 @@ import (
 // https://www.unicode.org/Public/16.0.0/ucdxml/ucd.nounihan.flat.zip
 
 func main() {
-	fmt.Println(emojitoolkit.IsSingleCharacterEmoji('A'))
-	fmt.Println(emojitoolkit.IsSingleCharacterEmoji('⏳'))
-	fmt.Println(emojitoolkit.IsSingleCharacterEmoji('🌍'))
-	fmt.Println(emojitoolkit.IsSingleCharacterEmoji('☀'))
-	fmt.Println(emojitoolkit.IsSingleCharacterEmoji('♻'))
-	// fmt.Println(emojitoolkit.ContainsEmoji("... ⬆"))
-
-	/*data, _ := os.ReadFile("../ucd.nounihan.flat.xml")
+	data, _ := os.ReadFile("../ucd.nounihan.flat.xml")
 	var ucd internal.AnyXML
 	err := xml.Unmarshal(data, &ucd)
 	if err != nil {
@@ -35,11 +31,11 @@ func main() {
 	}
 
 	for _, char := range repertoire.Children {
-		if char.GetAttr("EPres") == "Y" && char.GetAttr("EComp") == "N" {
+		if char.GetAttr("Emoji") == "Y" && char.GetAttr("EPres") == "N" {
 			n, _ := strconv.ParseUint(char.GetAttr("cp"), 16, 32)
 
 			fmt.Println(string(rune(n)))
 			// fmt.Printf("%c %c\uFE0F\n", n, n)
 		}
-	}*/
+	}
 }
