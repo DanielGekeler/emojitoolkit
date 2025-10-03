@@ -14,15 +14,12 @@ func main() {
 	GenerateEmojiRanges2(repertoire)
 }
 
-// Singe Codepoint emojis with Emoji_Presentation=Yes
-//
-// ED-6 see https://www.unicode.org/reports/tr51/#def_emoji_presentation
+// Singe Codepoint emojis with Emoji_Presentation=Yes & Emoji_Component=No
 func GenerateEmojiRanges(repertoire internal.AnyXML) {
 	codepoints := make([]int32, 0, 1024)
 
 	for _, char := range repertoire.Children {
-		if char.GetAttr("ExtPict") == "Y" && char.GetAttr("Emoji") == "Y" &&
-			char.GetAttr("EComp") == "N" {
+		if char.GetAttr("EPres") == "Y" && char.GetAttr("EComp") == "N" {
 			n, _ := strconv.ParseUint(char.GetAttr("cp"), 16, 32)
 			codepoints = append(codepoints, int32(n))
 		}

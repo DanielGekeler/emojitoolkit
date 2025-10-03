@@ -13,6 +13,28 @@ const Version = "16.0.0"
 //go:embed emoji_ranges.bin
 var emoji_ranges []byte
 
+// Matches codepoints that are default emoji presentation character ([ED-6])
+// that can be repressented as a single rune / codepoint.
+//
+// Codepoints that appear as text by default ([ED-7]) but can appear as emoji
+// using emoji presentation sequence ([ED-9a]) are not matched because
+// the pressence of U+FE0F VARIATION SELECTOR-16 (VS16) can not be verified from a single rune.
+//
+// See section Basic_Emoji of [emoji-sequences.txt] for a list of matching symbols.
+//
+// # Examples:
+//
+//	'A' -> false // U+0041
+//	'⏳' -> true // U+231B
+//	'🌍' -> true // U+1F30D
+//	'☀' -> false // U+2600
+//	'♻' -> false // U+267B
+//
+// This function can also be defined as Emoji_Presentation=Yes and Emoji_Component=No
+//
+// [ED-6]: https://www.unicode.org/reports/tr51/#def_emoji_presentation
+// [ED-7]: https://www.unicode.org/reports/tr51/#def_text_presentation
+// [ED-9a]: https://www.unicode.org/reports/tr51/#def_emoji_presentation_sequence
 func IsSingleCharacterEmoji(r rune) bool {
 	return isInRange(r, emoji_ranges)
 }
