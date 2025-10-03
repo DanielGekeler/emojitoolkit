@@ -46,10 +46,15 @@ var emoji_ranges2 []byte
 //go:embed emoji_ranges3.bin
 var emoji_ranges3 []byte
 
-// Matches default emoji presentation character ([ED-6]), emoji presentation sequence ([ED-9a])
-// and emoji keycap sequence ([ED-14c]). This should include all basic emoji defined by [ED-20].
+// Matches all* emojis
+//   - default emoji presentation character ([ED-6])
+//   - emoji presentation sequence ([ED-9a])
+//   - emoji keycap sequence ([ED-14c])
+//   - emoji flag sequence ([ED-14])
 //
-// See section Basic_Emoji and Emoji_Keycap_Sequence of [emoji-sequences.txt] for a list of matching emojis.
+// This should include all basic emoji defined by [ED-20].
+//
+// See [emoji-sequences.txt] for a list of matching emojis.
 //
 // # Examples:
 //
@@ -63,6 +68,7 @@ var emoji_ranges3 []byte
 //
 // [ED-6]: https://www.unicode.org/reports/tr51/#def_emoji_presentation
 // [ED-9a]: https://www.unicode.org/reports/tr51/#def_emoji_presentation_sequence
+// [ED-14]: https://www.unicode.org/reports/tr51/#def_emoji_flag_sequence
 // [ED-14c]: https://www.unicode.org/reports/tr51/#def_emoji_keycap_sequence
 // [ED-20]: https://www.unicode.org/reports/tr51/#def_basic_emoji_set
 // [emoji-sequences.txt]: https://www.unicode.org/Public/emoji/latest/emoji-sequences.txt
@@ -89,6 +95,10 @@ func ContainsEmoji(s string) bool {
 		const dark_skin = 0x1F3FF  // EMOJI MODIFIER FITZPATRICK TYPE-6
 		if isInRange(r, emoji_ranges3) && (next == VS16 || (next >= light_skin && next <= dark_skin)) {
 			// ED-22 RGI emoji modifier sequence set
+			return true
+		}
+
+		if IsFlagSequence(runes[i:]) {
 			return true
 		}
 	}
