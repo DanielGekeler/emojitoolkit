@@ -43,8 +43,11 @@ func IsSingleCharacterEmoji(r rune) bool {
 //go:embed emoji_ranges2.bin
 var emoji_ranges2 []byte
 
-// Matches default emoji presentation character ([ED-6]) as well as
-// emoji presentation sequence ([ED-9a]). This should include all basic emoji defined by [ED-20].
+//go:embed emoji_ranges3.bin
+var emoji_ranges3 []byte
+
+// Matches default emoji presentation character ([ED-6]), emoji presentation sequence ([ED-9a])
+// and emoji keycap sequence ([ED-14c]). This should include all basic emoji defined by [ED-20].
 //
 // See section Basic_Emoji and Emoji_Keycap_Sequence of [emoji-sequences.txt] for a list of matching emojis.
 //
@@ -60,6 +63,7 @@ var emoji_ranges2 []byte
 //
 // [ED-6]: https://www.unicode.org/reports/tr51/#def_emoji_presentation
 // [ED-9a]: https://www.unicode.org/reports/tr51/#def_emoji_presentation_sequence
+// [ED-14c]: https://www.unicode.org/reports/tr51/#def_emoji_keycap_sequence
 // [ED-20]: https://www.unicode.org/reports/tr51/#def_basic_emoji_set
 // [emoji-sequences.txt]: https://www.unicode.org/Public/emoji/latest/emoji-sequences.txt
 func ContainsEmoji(s string) bool {
@@ -70,7 +74,21 @@ func ContainsEmoji(s string) bool {
 			return true
 		}
 
-		if i+1 < l && isInRange(r, emoji_ranges2) && runes[i+1] == '\uFE0F' {
+		if i+1 >= l {
+			break // skip last rune because there is no next rune
+		}
+
+		const VS16 = '\uFE0F'
+		next := runes[i+1]
+		if isInRange(r, emoji_ranges2) && next == VS16 {
+			// ED-7 default text presentation character
+			return true
+		}
+
+		const light_skin = 0x1F3FB // EMOJI MODIFIER FITZPATRICK TYPE-1-2
+		const dark_skin = 0x1F3FF  // EMOJI MODIFIER FITZPATRICK TYPE-6
+		if isInRange(r, emoji_ranges3) && (next == VS16 || (next >= light_skin && next <= dark_skin)) {
+			// ED-22 RGI emoji modifier sequence set
 			return true
 		}
 	}
