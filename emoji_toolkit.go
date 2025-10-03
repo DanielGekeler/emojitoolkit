@@ -91,3 +91,34 @@ func isInRange(r rune, ranges []byte) bool {
 	}
 	return false
 }
+
+// Matches flag emojis officially known as emoji flag sequence ([ED-14]).
+// Does not check if the flag is valid.
+//
+// [ED-14]: https://www.unicode.org/reports/tr51/#def_emoji_flag_sequence
+func IsFlagSequence(runes []rune) bool {
+	if len(runes) < 2 {
+		return false
+	}
+
+	a := runes[0]
+	b := runes[1]
+	const flagA = 0x1F1E6 // REGIONAL INDICATOR SYMBOL LETTER A
+	const flagB = 0x1F1FF // REGIONAL INDICATOR SYMBOL LETTER Z
+	return a >= flagA && a <= flagB && b >= flagA && b <= flagB
+}
+
+// Matches a string that contains atleast one flag emoji officially known as emoji flag sequence ([ED-14]).
+// Does not check if the flag is valid.
+//
+// [ED-14]: https://www.unicode.org/reports/tr51/#def_emoji_flag_sequence
+func ContainsFlag(s string) bool {
+	runes := []rune(s)
+
+	for i := 0; i < len(runes)-1; i++ {
+		if IsFlagSequence(runes[i:]) {
+			return true
+		}
+	}
+	return false
+}
