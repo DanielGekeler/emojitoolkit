@@ -1,11 +1,12 @@
 package main
 
 import (
-	"emoji-toolkit/internal"
 	"encoding/binary"
 	"encoding/xml"
 	"os"
 	"strconv"
+
+	"github.com/DanielGekeler/emojitoolkit/internal"
 )
 
 func main() {

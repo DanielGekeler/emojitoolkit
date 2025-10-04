@@ -1,7 +1,9 @@
 package main
 
 import (
-	emojitoolkit "emoji-toolkit"
+	"fmt"
+
+	"github.com/DanielGekeler/emojitoolkit"
 )
 
 // https://www.unicode.org/reports/tr42/
@@ -11,7 +13,7 @@ import (
 // https://www.unicode.org/Public/16.0.0/ucdxml/ucd.nounihan.flat.zip
 
 func main() {
-	emojitoolkit.ContainsEmoji("")
+	fmt.Println(emojitoolkit.ContainsEmoji("1"))
 
 	/*data, _ := os.ReadFile("../ucd.nounihan.flat.xml")
 	var ucd internal.AnyXML
