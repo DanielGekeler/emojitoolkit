@@ -1,11 +1,7 @@
 package main
 
 import (
-	"emoji-toolkit/internal"
-	"encoding/xml"
-	"fmt"
-	"os"
-	"strconv"
+	emojitoolkit "emoji-toolkit"
 )
 
 // https://www.unicode.org/reports/tr42/
@@ -15,7 +11,9 @@ import (
 // https://www.unicode.org/Public/16.0.0/ucdxml/ucd.nounihan.flat.zip
 
 func main() {
-	data, _ := os.ReadFile("../ucd.nounihan.flat.xml")
+	emojitoolkit.ContainsEmoji("")
+
+	/*data, _ := os.ReadFile("../ucd.nounihan.flat.xml")
 	var ucd internal.AnyXML
 	err := xml.Unmarshal(data, &ucd)
 	if err != nil {
@@ -37,5 +35,5 @@ func main() {
 			fmt.Println(string(rune(n)))
 			// fmt.Printf("%c %c\uFE0F\n", n, n)
 		}
-	}
+	}*/
 }
