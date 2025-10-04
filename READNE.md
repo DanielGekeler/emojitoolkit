@@ -28,9 +28,11 @@ the regional indicator symbols, that is used to write a two letter country code.
 Example: 🇩🇪 (U+1F1E9 REGIONAL INDICATOR SYMBOL LETTER A U+1F1EA REGIONAL INDICATOR SYMBOL LETTER E).
 
 ## Features
-- Unicode Standard 1.16
 - Detects all Emojis listed in emoji-sequences.txt.
 - Detect Emojis in a single rune (only default emoji presentation character)
+- Unicode Standard 1.16
+- Unit tests and fuzzing
+    - `ContainsEmoji()` was fuzzed with 107745299 input strings
 
 ## Development
 Download [ucd.nounihan.flat.zip](https://www.unicode.org/Public/16.0.0/ucdxml/) and place `ucd.nounihan.flat.xml` in the repository root.

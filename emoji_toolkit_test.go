@@ -47,3 +47,19 @@ func TestContainsEmoji(t *testing.T) {
 		}
 	}
 }
+
+func FuzzContainsEmoji(f *testing.F) {
+	f.Add("A")
+	f.Add("1")
+	f.Add("⏳")
+	f.Add("🌍")
+	f.Add("☀")
+	f.Add("♻")
+	f.Add("☀️")
+	f.Add("♻️")
+	f.Add("1️⃣")
+
+	f.Fuzz(func(t *testing.T, s string) {
+		ContainsEmoji(s)
+	})
+}
