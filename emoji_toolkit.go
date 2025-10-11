@@ -1,17 +1,9 @@
 package emojitoolkit
 
-import (
-	_ "embed"
-	"encoding/binary"
-)
-
 // Supported Unicode version
 const Version = "16.0.0"
 
 //go:generate go run generator/main.go
-
-//go:embed emoji_ranges.bin
-var emoji_ranges []byte
 
 // Matches codepoints that are default emoji presentation character ([ED-6])
 // that can be repressented as a single rune / codepoint.
@@ -37,14 +29,8 @@ var emoji_ranges []byte
 // [ED-9a]: https://www.unicode.org/reports/tr51/#def_emoji_presentation_sequence
 // [emoji-sequences.txt]: https://www.unicode.org/Public/emoji/latest/emoji-sequences.txt
 func IsSingleCharacterEmoji(r rune) bool {
-	return isInRange(r, emoji_ranges)
+	return isInRange(r, emoji_ranges1)
 }
-
-//go:embed emoji_ranges2.bin
-var emoji_ranges2 []byte
-
-//go:embed emoji_ranges3.bin
-var emoji_ranges3 []byte
 
 // Matches all* emojis
 //   - default emoji presentation character ([ED-6])
@@ -109,11 +95,9 @@ func ContainsEmoji(s string) bool {
 // These sets are an array of int32 with each range being defined
 // as two consecutive int32 defining the first and last element
 // of a range respectively.
-func isInRange(r rune, ranges []byte) bool {
-	for i := 0; i < len(ranges); i += 8 {
-		min := binary.LittleEndian.Uint32(ranges[i:])
-		max := binary.LittleEndian.Uint32(ranges[i+4:])
-		if r >= rune(min) && r <= rune(max) {
+func isInRange(r rune, ranges []int32) bool {
+	for i := 0; i < len(ranges); i += 2 {
+		if r >= rune(ranges[i]) && r <= rune(ranges[i+1]) {
 			return true
 		}
 	}
