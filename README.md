@@ -30,12 +30,12 @@ Example: 🇩🇪 (U+1F1E9 REGIONAL INDICATOR SYMBOL LETTER A U+1F1EA REGIONAL I
 ## Features
 - Detects all Emojis listed in emoji-sequences.txt.
 - Detect Emojis in a single rune (only default emoji presentation character)
-- Unicode Standard 1.16
+- Unicode Standard 17.0.0
 - Unit tests and fuzzing
     - `ContainsEmoji()` was fuzzed with 107745299 input strings
 
 ## Development
-Download [ucd.nounihan.flat.zip](https://www.unicode.org/Public/16.0.0/ucdxml/) and place `ucd.nounihan.flat.xml` in the repository root.
+Download [ucd.nounihan.flat.zip](https://www.unicode.org/Public/17.0.0/ucdxml/) and place `ucd.nounihan.flat.xml` in the repository root.
 
 ## References
 - [Unicode Character Database in XML (UTS #42)](https://www.unicode.org/reports/tr42/)

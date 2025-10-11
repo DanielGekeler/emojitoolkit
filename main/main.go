@@ -10,7 +10,7 @@ import (
 // https://www.unicode.org/reports/tr44/
 // https://www.unicode.org/reports/tr51/#Identification
 // https://www.unicode.org/glossary/
-// https://www.unicode.org/Public/16.0.0/ucdxml/ucd.nounihan.flat.zip
+// https://www.unicode.org/Public/17.0.0/ucdxml/ucd.nounihan.flat.zip
 
 func main() {
 	fmt.Println(emojitoolkit.ContainsEmoji("1"))

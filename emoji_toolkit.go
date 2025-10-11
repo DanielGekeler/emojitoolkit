@@ -1,7 +1,7 @@
 package emojitoolkit
 
 // Supported Unicode version
-const Version = "16.0.0"
+const Version = "17.0.0"
 
 //go:generate go run generator/main.go
 
