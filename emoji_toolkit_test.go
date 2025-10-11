@@ -63,3 +63,17 @@ func FuzzContainsEmoji(f *testing.F) {
 		ContainsEmoji(s)
 	})
 }
+
+func TestData(t *testing.T) {
+	ranges := [][]int32{
+		emoji_ranges1,
+		emoji_ranges2,
+		emoji_ranges3,
+	}
+
+	for _, rs := range ranges {
+		if len(rs)%2 != 0 {
+			t.Fail()
+		}
+	}
+}
