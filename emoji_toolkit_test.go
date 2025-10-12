@@ -69,6 +69,7 @@ func TestData(t *testing.T) {
 		emoji_ranges1,
 		emoji_ranges2,
 		emoji_ranges3,
+		variant_ranges,
 	}
 
 	for _, rs := range ranges {
