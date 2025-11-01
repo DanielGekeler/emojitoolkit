@@ -74,16 +74,13 @@ func ContainsEmoji(s string) bool {
 			break // skip last rune because there is no next rune
 		}
 
-		const VS16 = '\uFE0F'
 		next := runes[i+1]
-		if isInRange(r, emoji_ranges2) && next == VS16 {
+		if isInRange(r, emoji_ranges2) && next == vs16 {
 			// ED-7 default text presentation character
 			return true
 		}
 
-		const light_skin = 0x1F3FB // EMOJI MODIFIER FITZPATRICK TYPE-1-2
-		const dark_skin = 0x1F3FF  // EMOJI MODIFIER FITZPATRICK TYPE-6
-		if isInRange(r, emoji_ranges3) && (next == VS16 || (next >= light_skin && next <= dark_skin)) {
+		if isInRange(r, emoji_ranges3) && (next == vs16 || (next >= light_skin && next <= dark_skin)) {
 			// ED-22 RGI emoji modifier sequence set
 			return true
 		}
@@ -123,8 +120,6 @@ func IsFlagSequence(runes []rune) bool {
 
 	a := runes[0]
 	b := runes[1]
-	const flagA = 0x1F1E6 // REGIONAL INDICATOR SYMBOL LETTER A
-	const flagB = 0x1F1FF // REGIONAL INDICATOR SYMBOL LETTER Z
 	return a >= flagA && a <= flagB && b >= flagA && b <= flagB
 }
 
@@ -156,14 +151,14 @@ func ToTextPresentation(s string) string {
 		}
 		x := i + 1
 
-		if i+1 < len(rs) && rs[i+1] == '\uFE0F' { // VS16
+		if i+1 < len(rs) && rs[i+1] == vs16 {
 			x++
 		}
 
 		// Special treatment for 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, #, *
 		if r := rs[i]; (r >= '0' && r <= '9') || r == '#' || r == '*' {
 			// ED-14c emoji keycap sequence
-			if i+2 < len(rs) && rs[i+2] == '\u20E3' { // COMBINING ENCLOSING KEYCAP
+			if i+2 < len(rs) && rs[i+2] == keycap {
 				x++
 			}
 			return rs[:i+1], x
@@ -171,7 +166,7 @@ func ToTextPresentation(s string) string {
 
 		ret := make([]rune, i+1)
 		copy(ret, rs[:i+1])
-		return append(ret, '\uFE0E'), x
+		return append(ret, vs15), x
 	}
 
 	runes := []rune(s)
