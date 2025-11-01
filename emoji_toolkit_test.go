@@ -78,3 +78,33 @@ func TestData(t *testing.T) {
 		}
 	}
 }
+
+func TestToTextPresentation(t *testing.T) {
+	testCases := map[string]string{
+		"":     "",
+		"A":    "A",
+		"1":    "1",
+		"1️⃣":  "1",
+		"1️⃣.": "1.",
+		"⏳":    "⏳\uFE0E",
+		"🌍":    "🌍\uFE0E",
+		"☀":    "☀\uFE0E",
+		"♻":    "♻\uFE0E",
+		"☀️":   "☀\uFE0E",
+		"♻️":   "♻\uFE0E",
+
+		"⏳.":  "⏳\uFE0E.",
+		"🌍.":  "🌍\uFE0E.",
+		".⏳.": ".⏳\uFE0E.",
+		".🌍.": ".🌍\uFE0E.",
+
+		".🌍.🌍..🌍.": ".🌍\uFE0E.🌍\uFE0E..🌍\uFE0E.",
+	}
+
+	for input, expected := range testCases {
+		result := ToTextPresentation(input)
+		if result != expected {
+			t.Fatalf("ToTextPresentation(\"%s\") = %s; want %s", input, result, expected)
+		}
+	}
+}

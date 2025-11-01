@@ -1,5 +1,9 @@
 package emojitoolkit
 
+import (
+	"slices"
+)
+
 // Supported Unicode version
 const Version = "17.0.0"
 
@@ -104,6 +108,10 @@ func isInRange(r rune, ranges []int32) bool {
 	return false
 }
 
+func isInRangeF(ranges []int32) func(rune) bool {
+	return func(r rune) bool { return isInRange(r, ranges) }
+}
+
 // Matches flag emojis officially known as emoji flag sequence ([ED-14]).
 // Does not check if the flag is valid.
 //
@@ -133,4 +141,51 @@ func ContainsFlag(s string) bool {
 		}
 	}
 	return false
+}
+
+func ToTextPresentation(s string) string {
+	if s == "" {
+		return s
+	}
+
+	// returns the adjusted string and how many were taken
+	f := func(rs []rune) ([]rune, int) {
+		i := slices.IndexFunc(rs, isInRangeF(variant_ranges))
+		if i < 0 {
+			return rs, len(rs)
+		}
+		x := i + 1
+
+		if i+1 < len(rs) && rs[i+1] == '\uFE0F' { // VS16
+			x++
+		}
+
+		// Special treatment for 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, #, *
+		if r := rs[i]; (r >= '0' && r <= '9') || r == '#' || r == '*' {
+			// ED-14c emoji keycap sequence
+			if i+2 < len(rs) && rs[i+2] == '\u20E3' { // COMBINING ENCLOSING KEYCAP
+				x++
+			}
+			return rs[:i+1], x
+		}
+
+		ret := make([]rune, i+1)
+		copy(ret, rs[:i+1])
+		return append(ret, '\uFE0E'), x
+	}
+
+	runes := []rune(s)
+	ret := make([]rune, 0, len(runes))
+	n := 0
+
+	x, i := f(runes[n:])
+	ret = append(ret, x...)
+	n += i
+	for n < len(runes)-1 {
+		x, i := f(runes[n:])
+		ret = append(ret, x...)
+		n += i
+	}
+
+	return string(append(ret, runes[n:]...))
 }
