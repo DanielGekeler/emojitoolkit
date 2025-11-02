@@ -142,3 +142,21 @@ func TestToEmojiPresentation(t *testing.T) {
 		}
 	}
 }
+
+func TestVariants(t *testing.T) {
+	const s = "🌈 The sun ☀️ danced brightly in the sky, illuminating the bustling city 🏙️ filled with laughter 😂 and music 🎶. Children 🎈 played in the park 🌳, while couples ❤️ strolled hand in hand, exchanging sweet nothings 💕. A dog 🐶 chased after a frisbee 🥏, and the smell of delicious food 🍔 wafted from nearby food stalls 🍜. As the afternoon turned to evening 🌅, colorful lights ✨ began to twinkle, setting the stage for a magical night 🌙 filled with dreams 💤 and adventures 🚀!"
+
+	text := ToTextPresentation(s)
+	emoji := ToEmojiPresentation(text)
+
+	text2 := ToTextPresentation(emoji)
+	emoji2 := ToEmojiPresentation(text2)
+
+	if emoji != emoji2 {
+		t.Fatalf("ToEmojiPresentation(%q) = %q; want %s", text2, emoji2, emoji)
+	}
+
+	if text != text2 {
+		t.Fatalf("ToTextPresentation(%q) = %q; want %s", emoji, text2, text)
+	}
+}
