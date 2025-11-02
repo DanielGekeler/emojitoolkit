@@ -184,3 +184,54 @@ func ToTextPresentation(s string) string {
 
 	return string(append(ret, runes[n:]...))
 }
+
+func ToEmojiPresentation(s string) string {
+	if s == "" {
+		return s
+	}
+
+	// returns the adjusted string and how many runes were taken
+	f := func(rs []rune) ([]rune, int) {
+		i := slices.IndexFunc(rs, isInRangeF(variant_ranges))
+		if i < 0 {
+			return rs, len(rs)
+		}
+		x := i + 1 // number of runes taken of rs
+
+		// Special treatment for 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, #, *
+		if r := rs[i]; (r >= '0' && r <= '9') || r == '#' || r == '*' {
+			// ED-14c emoji keycap sequence
+			if i+2 < len(rs) && rs[i+1] == vs16 && rs[i+2] == keycap {
+				// Keycap stays keycap.
+				// Return includig the VS16 and COMBINING ENCLOSING KEYCAP
+				return rs[:i+3], x + 2
+			}
+
+			// Ascii numbers stay numbers
+			return rs[:i+1], x
+		}
+
+		if i+1 < len(rs) && (rs[i+1] == vs15 || rs[i+1] == vs16) {
+			x++
+		}
+
+		ret := make([]rune, i+1)
+		copy(ret, rs[:i+1])
+		return append(ret, vs16), x
+	}
+
+	runes := []rune(s)
+	ret := make([]rune, 0, len(runes))
+	n := 0
+
+	x, i := f(runes[n:])
+	ret = append(ret, x...)
+	n += i
+	for n < len(runes)-1 {
+		x, i = f(runes[n:])
+		ret = append(ret, x...)
+		n += i
+	}
+
+	return string(append(ret, runes[n:]...))
+}

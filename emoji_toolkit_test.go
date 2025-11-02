@@ -108,3 +108,37 @@ func TestToTextPresentation(t *testing.T) {
 		}
 	}
 }
+
+func TestToEmojiPresentation(t *testing.T) {
+	testCases := map[string]string{
+		"":     "",
+		"A":    "A",
+		"1":    "1",
+		"1️⃣":  "1️⃣",
+		"1️⃣.": "1️⃣.",
+		"⏳":    "⏳\uFE0F",
+		"🌍":    "🌍\uFE0F",
+
+		"⏳\uFE0E": "⏳\uFE0F",
+		"🌍\uFE0E": "🌍\uFE0F",
+		"☀\uFE0E": "☀️",
+		"♻\uFE0E": "♻️",
+		"☀":       "☀️",
+		"♻":       "♻️",
+
+		"⏳\uFE0E.":  "⏳\uFE0F.",
+		"🌍\uFE0E.":  "🌍\uFE0F.",
+		".⏳\uFE0E.": ".⏳\uFE0F.",
+		".🌍\uFE0E.": ".🌍\uFE0F.",
+
+		".🌍\uFE0E.🌍..🌍\uFE0E.": ".🌍\uFE0F.🌍\uFE0F..🌍\uFE0F.",
+	}
+
+	for input, expected := range testCases {
+		result := ToEmojiPresentation(input)
+		t.Logf("%q -> %q", input, result)
+		if result != expected {
+			t.Fatalf("ToEmojiPresentation(\"%s\") = %s; want %s", input, result, expected)
+		}
+	}
+}
