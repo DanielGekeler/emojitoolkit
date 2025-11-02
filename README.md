@@ -1,4 +1,6 @@
 # Emoji toolkit
+[![Go Reference](https://pkg.go.dev/badge/github.com/DanielGekeler/emojitoolkit.svg)](https://pkg.go.dev/github.com/DanielGekeler/emojitoolkit)
+
 A package to check if runes are Emojis or strings contain Emojis and flags.
 
 The standard [Unicode](https://pkg.go.dev/unicode) package does not

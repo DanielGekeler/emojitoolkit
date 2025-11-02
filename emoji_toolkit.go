@@ -18,7 +18,7 @@ const Version = "17.0.0"
 //
 // See section Basic_Emoji of [emoji-sequences.txt] for a list of matching emojis.
 //
-// # Examples:
+// Examples:
 //
 //	'A' -> false // U+0041
 //	'⏳' -> true // U+231B
@@ -46,7 +46,7 @@ func IsSingleCharacterEmoji(r rune) bool {
 //
 // See [emoji-sequences.txt] for a list of matching emojis.
 //
-// # Examples:
+// Examples:
 //
 //	"A" -> false // U+0041
 //	"⏳" -> true // U+231B
@@ -138,6 +138,20 @@ func ContainsFlag(s string) bool {
 	return false
 }
 
+// Make all emojis in a given string appear in their text variants.
+// Numbers remain unchanged.
+//
+// This is done using the U+FE0E VARIATION SELECTOR-15 (VS15) to form a
+// [ED-8a] text presentation sequence. This can only be done to characters
+// listed in [emoji-variation-sequences.txt].
+//
+// Examples
+//
+//	"1" -> "1"
+//	"⏳" -> "⏳︎"
+//
+// [ED-8a]: https://www.unicode.org/reports/tr51/#def_text_presentation_sequence
+// [emoji-variation-sequences.txt]: https://www.unicode.org/Public/17.0.0/ucd/emoji/emoji-variation-sequences.txt
 func ToTextPresentation(s string) string {
 	if s == "" {
 		return s
@@ -185,6 +199,20 @@ func ToTextPresentation(s string) string {
 	return string(append(ret, runes[n:]...))
 }
 
+// Make all emojis in a given string appear in their emoji variants.
+// Numbers remain unchanged.
+//
+// This is done using the U+FE0F VARIATION SELECTOR-16 (VS16) to form a
+// [ED-9a] text presentation sequence. This can only be done to characters
+// listed in [emoji-variation-sequences.txt].
+//
+// Examples
+//
+//	"1" -> "1"
+//	"☀" -> "☀️"
+//
+// [ED-9a]: https://www.unicode.org/reports/tr51/#def_emoji_presentation_sequence
+// [emoji-variation-sequences.txt]: https://www.unicode.org/Public/17.0.0/ucd/emoji/emoji-variation-sequences.txt
 func ToEmojiPresentation(s string) string {
 	if s == "" {
 		return s
